@@ -57,7 +57,7 @@ import std.functional;
 			$(LI Multiple placeholders and raw wildcards can be combined: `"/:x/:y/*"`)
 		)
 */
-final class URLRouter : HTTPServerRequestHandler {
+class URLRouter : HTTPServerRequestHandler {
 	@safe:
 
 	private {
