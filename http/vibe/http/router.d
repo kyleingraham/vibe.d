@@ -861,7 +861,7 @@ private struct MatchTree(T) {
 		m_nodes = nodes.data;
 		m_terminalTags = termtags.data;
 
-		builder.print()
+		builder.print();
 
 		logDebug("Match tree has %s (of %s in the builder) nodes, %s terminals", m_nodes.length, builder.m_nodes.length, m_terminals.length);
 	}
