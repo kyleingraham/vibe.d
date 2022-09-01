@@ -113,6 +113,7 @@ if (is(Settings == string) || is(Settings == HTTPServerSettings)) {
 HTTPListener listenHTTP(Settings)(Settings settings, HTTPServerRequestHandler request_handler)
 @safe
 if (is(Settings == string) || is(Settings == HTTPServerSettings)) {
+	// vibe-d calls handleRequest on the router we pass in
 	return listenHTTP(settings, &request_handler.handleRequest);
 }
 /// ditto
@@ -2281,7 +2282,7 @@ private bool handleRequest(InterfaceProxy!Stream http_stream, TCPConnection tcp_
 		if (context.settings.rejectConnectionPredicate !is null)
 		{
 			import std.socket : Address, parseAddress;
-			
+
 			auto forward = req.headers.get("X-Forwarded-For", null);
 			if (forward !is null)
 			{
@@ -2290,7 +2291,7 @@ private bool handleRequest(InterfaceProxy!Stream http_stream, TCPConnection tcp_
 					if (ix != -1)
 						forward = forward[0 .. ix];
 					if (context.settings.rejectConnectionPredicate(NetworkAddress(parseAddress(forward))))
-						errorOut(HTTPStatus.forbidden, 
+						errorOut(HTTPStatus.forbidden,
 							httpStatusText(HTTPStatus.forbidden), null, null);
 				} catch (Exception e)
 					logTrace("Malformed X-Forwarded-For header: %s", e.msg);

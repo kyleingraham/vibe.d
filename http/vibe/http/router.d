@@ -68,6 +68,7 @@ class URLRouter : HTTPServerRequestHandler {
 
 	this(string prefix = null)
 	{
+		// We can set a prefix for all routes here
 		m_prefix = prefix;
 	}
 
@@ -129,6 +130,7 @@ class URLRouter : HTTPServerRequestHandler {
 		assert(path.length, "Cannot register null or empty path!");
 		assert(count(path, ':') <= maxRouteParameters, "Too many route parameters");
 		logDebug("add route %s %s", method, path);
+		// Here we add the handler for our path
 		m_routes.addTerminal(path, Route(method, path, handlerDelegate(handler)));
 		return this;
 	}
@@ -198,6 +200,7 @@ class URLRouter : HTTPServerRequestHandler {
 		string calcBasePath()
 		@safe {
 			import vibe.core.path : InetPath, relativeToWeb;
+			// When no prefix is defined we used '/'
 			auto p = InetPath(prefix.length ? prefix : "/");
 			p.endsWithSlash = true;
 			return p.relativeToWeb(InetPath(req.path)).toString();
@@ -208,6 +211,8 @@ class URLRouter : HTTPServerRequestHandler {
 		path = path[m_prefix.length .. $];
 
 		while (true) {
+			// We try to match here. If we do we run a lambda.
+			// How does match work?
 			bool done = m_routes.match(path, (ridx, scope values) @safe {
 				auto r = () @trusted { return &m_routes.getTerminalData(ridx); } ();
 				if (r.method != method) return false;
@@ -655,6 +660,9 @@ private struct MatchTree(T) {
 	void addTerminal(string pattern, T data)
 	{
 		assert(m_terminals.length < TerminalIndex.max, "Attempt to register too many routes.");
+		// data is a Route struct with method, path, and handler
+		// Terminal is a struct that holds data on path variable names
+		// Is the structure that powers matching a list of Terminals?
 		m_terminals ~= Terminal(pattern, data, null, null);
 		m_upToDate = false;
 	}
@@ -800,6 +808,7 @@ private struct MatchTree(T) {
 		m_nodes = null;
 		m_terminalTags = null;
 
+		// No terminals? Exit.
 		if (!m_terminals.length) return;
 
 		MatchGraphBuilder builder;
@@ -851,6 +860,8 @@ private struct MatchTree(T) {
 
 		m_nodes = nodes.data;
 		m_terminalTags = termtags.data;
+
+		builder.print()
 
 		logDebug("Match tree has %s (of %s in the builder) nodes, %s terminals", m_nodes.length, builder.m_nodes.length, m_terminals.length);
 	}
