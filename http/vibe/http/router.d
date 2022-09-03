@@ -861,8 +861,6 @@ private struct MatchTree(T) {
 		m_nodes = nodes.data;
 		m_terminalTags = termtags.data;
 
-		builder.print();
-
 		logDebug("Match tree has %s (of %s in the builder) nodes, %s terminals", m_nodes.length, builder.m_nodes.length, m_terminals.length);
 	}
 }
@@ -982,7 +980,7 @@ private struct MatchGraphBuilder {
 		// create start node and connect to zero node
 		auto nidx = addNode();
 		addEdge(0, nidx, '^', terminal);
-
+		logInfo("Added start node and edge between start and terminal %s", terminal);
 		while (pattern.length) {
 			auto ch = pattern[0];
 			if (ch == '*') {
